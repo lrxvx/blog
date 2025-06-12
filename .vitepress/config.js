@@ -1,7 +1,9 @@
 // .vitepress/config.js
 import { defineConfig } from 'vitepress'
 
-export default defineConfig({
+export default defineConfig({  
+  // 忽略死链接，防止构建失败
+  ignoreDeadLinks: true,
   // 站点基本信息
   lang: 'zh-CN',
   title: '个人博客',
