@@ -8,33 +8,35 @@ description: 按标签分类的文章列表
 按标签浏览所有文章。
 
 <script setup>
-import { data as posts } from '../.vitepress/theme/composables/posts.data.js'
-import { ref, computed } from 'vue'
+import posts from '../.vitepress/theme/composables/posts.data.js'
+import { ref, computed, onMounted } from 'vue'
+
+console.log('Posts data in tags/index.md:', posts);
 
 // 提取所有标签并计算每个标签的文章数量
 const tags = computed(() => {
-  const tagMap = new Map()
-  
-  posts.forEach(post => {
-    if (post.tags && Array.isArray(post.tags)) {
-      post.tags.forEach(tag => {
-        if (!tagMap.has(tag)) {
-          tagMap.set(tag, [])
-        }
-        tagMap.get(tag).push(post)
-      })
-    }
+    const tagMap = new Map()
+    
+    posts.forEach(post => {
+      if (post.tags && Array.isArray(post.tags)) {
+        post.tags.forEach(tag => {
+          if (!tagMap.has(tag)) {
+            tagMap.set(tag, [])
+          }
+          tagMap.get(tag).push(post)
+        })
+      }
+    })
+    
+    // 转换为数组并按文章数量排序
+    return Array.from(tagMap.entries())
+      .map(([name, posts]) => ({
+        name,
+        count: posts.length,
+        posts
+      }))
+      .sort((a, b) => b.count - a.count)
   })
-  
-  // 转换为数组并按文章数量排序
-  return Array.from(tagMap.entries())
-    .map(([name, posts]) => ({
-      name,
-      count: posts.length,
-      posts
-    }))
-    .sort((a, b) => b.count - a.count)
-})
 
 // 当前选中的标签
 const activeTag = ref('')
@@ -224,16 +226,12 @@ function initFromHash() {
 }
 </style>
 
-<script>
-// 客户端激活后初始化
-if (typeof window !== 'undefined') {
-  window.addEventListener('DOMContentLoaded', () => {
-    initFromHash()
-  })
-  
-  // 监听hash变化
-  window.addEventListener('hashchange', () => {
-    initFromHash()
-  })
-}
-</script>
+onMounted(() => {
+  initFromHash()
+  window.addEventListener('hashchange', initFromHash)
+})
+
+// 在组件卸载时移除事件监听器，防止内存泄漏
+// onUnmounted(() => {
+//   window.removeEventListener('hashchange', initFromHash)
+// })
