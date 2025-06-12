@@ -8,7 +8,7 @@ description: 按标签分类的文章列表
 按标签浏览所有文章。
 
 <script setup>
-import posts from '../.vitepress/theme/composables/posts.data.js'
+import posts from '../.vitepress/theme/composables/posts.data'
 import { ref, computed, onMounted } from 'vue'
 
 console.log('Posts data in tags/index.md:', posts);
