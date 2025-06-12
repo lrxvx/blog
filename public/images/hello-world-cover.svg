@@ -1,0 +1,23 @@
+<svg width="800" height="400" xmlns="http://www.w3.org/2000/svg">
+  <!-- 背景 -->
+  <rect width="800" height="400" fill="#f4f4f4"/>
+  
+  <!-- 装饰图形 -->
+  <circle cx="150" cy="100" r="80" fill="#42b883" opacity="0.7"/>
+  <circle cx="650" cy="300" r="100" fill="#35495e" opacity="0.7"/>
+  <rect x="400" y="50" width="150" height="150" rx="20" fill="#41b883" opacity="0.5"/>
+  <rect x="250" y="200" width="120" height="120" rx="15" fill="#35495e" opacity="0.5"/>
+  
+  <!-- 中心文字区域 -->
+  <rect x="200" y="120" width="400" height="160" rx="20" fill="white" opacity="0.9"/>
+  
+  <!-- 标题文字 -->
+  <text x="400" y="180" font-family="Arial, sans-serif" font-size="36" font-weight="bold" text-anchor="middle" fill="#35495e">Hello World</text>
+  <text x="400" y="230" font-family="Arial, sans-serif" font-size="24" text-anchor="middle" fill="#42b883">我的第一篇博客</text>
+  
+  <!-- VitePress 标志 -->
+  <g transform="translate(370, 270) scale(0.5)">
+    <path d="M 0 -50 L 50 50 L -50 50 Z" fill="#42b883"/>
+    <path d="M 0 -50 L 20 0 L -20 0 Z" fill="#35495e"/>
+  </g>
+</svg>
