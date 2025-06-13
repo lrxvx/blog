@@ -1,0 +1,82 @@
+name: Backup Stats Data
+
+on:
+  schedule:
+    # 每天凌晨 2 点运行
+    - cron: '0 2 * * *'
+  # 允许手动触发
+  workflow_dispatch:
+
+jobs:
+  backup:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: Install dependencies
+        run: npm install faunadb
+
+      - name: Fetch stats data from FaunaDB
+        env:
+          FAUNA_SECRET: ${{ secrets.FAUNA_SECRET }}
+        run: |
+          node -e "
+            const { Client, query: q } = require('faunadb');
+            
+            async function fetchStats() {
+              try {
+                const client = new Client({ secret: process.env.FAUNA_SECRET });
+                
+                const result = await client.query(
+                  q.Get(q.Ref(q.Collection('stats'), 'all'))
+                );
+                
+                const data = result.data || {};
+                const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+                const filename = `stats-backup-${timestamp}.json`;
+                
+                require('fs').writeFileSync(filename, JSON.stringify(data, null, 2));
+                console.log(`统计数据已备份到 ${filename}`);
+                
+                return filename;
+              } catch (error) {
+                console.error('获取统计数据失败:', error);
+                process.exit(1);
+              }
+            }
+            
+            fetchStats();
+          "
+
+      - name: Create backup branch if not exists
+        run: |
+          git config --global user.name 'GitHub Actions'
+          git config --global user.email 'actions@github.com'
+          
+          # 尝试切换到 stats-backup 分支，如果不存在则创建
+          git checkout stats-backup 2>/dev/null || git checkout -b stats-backup
+
+      - name: Move backup file to backups directory
+        run: |
+          # 创建备份目录（如果不存在）
+          mkdir -p stats-backups
+          
+          # 移动备份文件到备份目录
+          mv stats-backup-*.json stats-backups/
+
+      - name: Commit and push backup
+        run: |
+          # 添加所有备份文件
+          git add stats-backups/
+          
+          # 提交更改
+          git commit -m "自动备份统计数据 $(date +'%Y-%m-%d %H:%M:%S')" || echo "没有新的备份文件需要提交"
+          
+          # 推送到远程仓库
+          git push origin stats-backup

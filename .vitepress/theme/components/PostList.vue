@@ -17,6 +17,9 @@
         <div class="blog-post-meta">
           <span class="blog-post-date">{{ post.date }}</span>
           <span v-if="post.author" class="blog-post-author">{{ post.author }}</span>
+          <span class="blog-post-views" v-if="typeof window !== 'undefined'">
+            <span class="view-icon">👁️</span> {{ getPostViews(post.url) }}
+          </span>
         </div>
         <p v-if="post.description" class="blog-post-excerpt">
           {{ post.description }}
@@ -43,8 +46,9 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { getTagColor } from '../utils'
+import { getPostStats } from '../utils/PostStatsManager'
 
 // 组件属性
 const props = defineProps({
@@ -69,6 +73,32 @@ const displayPosts = computed(() => {
     return props.posts
   }
   return props.posts.slice(0, props.limit)
+})
+
+// 获取文章访问量
+const getPostViews = (url) => {
+  if (typeof window === 'undefined') return 0
+  
+  // 处理URL格式，确保与存储的ID格式一致
+  const postId = url.startsWith('/') ? url.substring(1) : url
+  const stats = getPostStats(postId)
+  return stats ? stats.views : 0
+}
+
+// 组件挂载时刷新数据
+onMounted(() => {
+  // 定时刷新访问量数据
+  const interval = setInterval(() => {
+    if (typeof window !== 'undefined') {
+      // 强制更新组件
+      showAll.value = showAll.value
+    }
+  }, 30000) // 每30秒刷新一次
+  
+  // 组件卸载时清除定时器
+  return () => {
+    clearInterval(interval)
+  }
 })
 </script>
 
@@ -95,5 +125,18 @@ const displayPosts = computed(() => {
   background-color: var(--vp-c-brand);
   color: white;
   border-color: var(--vp-c-brand);
+}
+
+.blog-post-views {
+  display: inline-flex;
+  align-items: center;
+  margin-left: 1rem;
+  color: var(--vp-c-text-2);
+  font-size: 0.9rem;
+}
+
+.view-icon {
+  margin-right: 0.25rem;
+  font-size: 0.9rem;
 }
 </style>

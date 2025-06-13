@@ -17,9 +17,11 @@ const isPostPage = computed(() => {
 
 <template>
   <Layout>
-    <!-- 在文章内容前添加面包屑导航 -->
+    <!-- 在文章内容前添加面包屑导航和文章统计 -->
     <template #doc-before>
       <BreadcrumbNav />
+      <!-- 文章统计功能已禁用 -->
+      <!-- <PostStats /> -->
     </template>
     
     <template #doc-after>

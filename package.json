@@ -7,7 +7,9 @@
   "scripts": {
     "dev": "vitepress dev",
     "build": "vitepress build",
-    "preview": "vitepress preview"
+    "preview": "vitepress preview",
+    "bootstrap": "node netlify/scripts/bootstrap-fauna-database.js",
+    "netlify:dev": "netlify dev"
   },
   "keywords": [
     "blog",
@@ -17,7 +19,11 @@
   "author": "",
   "license": "MIT",
   "devDependencies": {
+    "netlify-cli": "^15.0.0",
     "vitepress": "^1.0.0-rc.40",
     "vue": "^3.3.11"
+  },
+  "dependencies": {
+    "faunadb": "^4.8.0"
   }
 }

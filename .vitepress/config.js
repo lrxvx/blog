@@ -27,6 +27,7 @@ export default defineConfig({
       { text: '博客', link: '/posts/' },
       { text: '标签', link: '/tags/' },
       { text: '关于', link: '/about/' },
+      { text: '统计', link: '/about/stats' },
     ],
     
     // 侧边栏
@@ -36,6 +37,15 @@ export default defineConfig({
           text: '博客文章',
           items: [
             { text: '所有文章', link: '/posts/' },
+          ]
+        }
+      ],
+      '/about/': [
+        {
+          text: '关于',
+          items: [
+            { text: '关于我', link: '/about/' },
+            { text: '文章统计', link: '/about/stats' },
           ]
         }
       ],
