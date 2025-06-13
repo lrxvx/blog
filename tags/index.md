@@ -8,8 +8,8 @@ description: 按标签分类的文章列表
 按标签浏览所有文章。
 
 <script setup>
-import posts from '../.vitepress/theme/composables/posts.data'
-import { ref, computed, onMounted } from 'vue'
+import { data as posts } from '../.vitepress/theme/composables/posts.data.js'
+import { ref, computed, onMounted, nextTick } from 'vue'
 
 console.log('Posts data in tags/index.md:', posts);
 
@@ -44,8 +44,17 @@ const activeTag = ref('')
 // 根据选中的标签筛选文章
 const filteredPosts = computed(() => {
   if (!activeTag.value) return []
-  return tags.value.find(tag => tag.name === activeTag.value)?.posts || []
+  const tagObj = tags.value.find(tag => tag.name === activeTag.value)
+  if (!tagObj || !Array.isArray(tagObj.posts)) return []
+  
+  // 确保每个 post 对象都有必要的属性
+  return tagObj.posts.filter(post => post && typeof post === 'object' && post.title && post.url)
 })
+// const filteredPosts = computed(() => {
+//   if (!activeTag.value) return []
+//   const found = tags.value.find(tag => tag.name === activeTag.value)
+//   return found ? found.posts.filter(post => post && post.title) : []
+// })
 
 // 设置活动标签
 function setActiveTag(tag) {
@@ -59,15 +68,32 @@ function setActiveTag(tag) {
 }
 
 // 初始化：从URL hash中获取标签
+// function initFromHash() {
+//   const hash = window.location.hash
+//   if (hash) {
+//     const tag = decodeURIComponent(hash.slice(1))
+//     if (tags.value.some(t => t.name === tag)) {
+//       setActiveTag(tag)
+//     }
+//   }
+// }
 function initFromHash() {
   const hash = window.location.hash
   if (hash) {
     const tag = decodeURIComponent(hash.slice(1))
     if (tags.value.some(t => t.name === tag)) {
-      setActiveTag(tag)
+      // 添加延迟确保数据加载完成
+      nextTick(() => {
+        setActiveTag(tag)
+      })
     }
   }
 }
+onMounted(() => {
+  initFromHash()
+  window.addEventListener('hashchange', initFromHash)
+})
+
 </script>
 
 <div class="tags-container">
@@ -87,19 +113,22 @@ function initFromHash() {
   <div v-if="activeTag" class="tag-posts">
     <h2>{{ activeTag }} <button class="clear-btn" @click="setActiveTag('')">清除</button></h2>
     
-    <div class="posts-list">
-      <div v-for="post in filteredPosts" :key="post.url" class="post-item">
+  <div class="posts-list">
+    <template v-for="post in filteredPosts" :key="post?.url">
+      <div v-if="post && post.title" class="post-item">
         <div class="post-title">
-          <a :href="post.url">{{ post.title }}</a>
+          <a :href="post?.url">{{ post?.title }}</a>
         </div>
         <div class="post-meta">
-          <span class="post-date">{{ post.date }}</span>
+          <span v-if="post?.date" class="post-date">{{ post?.date }}</span>
         </div>
-        <div v-if="post.description" class="post-description">
-          {{ post.description }}
+        <div v-if="post?.description" class="post-description">
+          {{ post?.description }}
         </div>
       </div>
-    </div>
+    </template>
+  </div>
+
   </div>
   
   <div v-else class="tag-instruction">
@@ -224,14 +253,6 @@ function initFromHash() {
     margin-bottom: 0;
   }
 }
+
+
 </style>
-
-onMounted(() => {
-  initFromHash()
-  window.addEventListener('hashchange', initFromHash)
-})
-
-// 在组件卸载时移除事件监听器，防止内存泄漏
-// onUnmounted(() => {
-//   window.removeEventListener('hashchange', initFromHash)
-// })
