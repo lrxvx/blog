@@ -2,7 +2,7 @@
 title: Hello World - 我的第一篇博客
 description: 这是我的第一篇博客文章，介绍了如何使用VitePress创建个人博客
 date: 2025-06-12
-tags: [VitePress, 博客, 教程]
+tags: [VitePress, 博客, 教程, 技术/前端, 技术/静态网站, 个人成长/学习笔记]
 author: 博主
 cover: /images/hello-world-cover.jpg
 ---

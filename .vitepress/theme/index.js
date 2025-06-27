@@ -9,6 +9,7 @@ import PostNavigation from './components/PostNavigation.vue'
 import PostStats from './components/PostStats.vue'
 import PostStatsAdmin from './components/PostStatsAdmin.vue'
 import GlobalStats from './components/GlobalStats.vue'
+import TagBar from './components/TagBar.vue'
 import Layout from './Layout.vue'
 import { initStatsManager } from './utils/PostStatsManager.js'
 
@@ -25,6 +26,7 @@ export default {
     app.component('PostStats', PostStats)
     app.component('PostStatsAdmin', PostStatsAdmin)
     app.component('GlobalStats', GlobalStats)
+    app.component('TagBar', TagBar)
     
     // 在客户端环境下初始化统计数据管理器 - 已禁用
     /*

@@ -17,8 +17,9 @@ const isPostPage = computed(() => {
 
 <template>
   <Layout>
-    <!-- 在文章内容前添加面包屑导航和文章统计 -->
+    <!-- 在文章内容前添加标签栏、面包屑导航和文章统计 -->
     <template #doc-before>
+      <TagBar v-if="isPostPage" />
       <BreadcrumbNav />
       <!-- 文章统计功能已禁用 -->
       <!-- <PostStats /> -->

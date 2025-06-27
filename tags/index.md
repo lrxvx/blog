@@ -1,17 +1,10 @@
----
-title: 文章标签
-description: 按标签分类的文章列表
----
 
-# 文章标签
-
-按标签浏览所有文章。
 
 <script setup>
 import { data as posts } from '../.vitepress/theme/composables/posts.data.js'
 import { ref, computed, onMounted, nextTick } from 'vue'
 
-console.log('Posts data in tags/index.md:', posts);
+const searchQuery = ref('')
 
 // 提取所有标签并计算每个标签的文章数量
 const tags = computed(() => {
@@ -38,57 +31,84 @@ const tags = computed(() => {
       .sort((a, b) => b.count - a.count)
   })
 
-// 当前选中的标签
-const activeTag = ref('')
+// 当前选中的标签，默认为'all'显示全部文章
+const activeTag = ref('all')
 
 // 根据选中的标签筛选文章
 const filteredPosts = computed(() => {
-  if (!activeTag.value) return []
-  const tagObj = tags.value.find(tag => tag.name === activeTag.value)
-  if (!tagObj || !Array.isArray(tagObj.posts)) return []
+  let result = []
   
-  // 确保每个 post 对象都有必要的属性
-  return tagObj.posts.filter(post => post && typeof post === 'object' && post.title && post.url)
+  if (activeTag.value === 'all') {
+    // 显示所有文章，按时间倒序排列
+    result = posts
+  } else {
+    // 显示特定标签的文章
+    const tagObj = tags.value.find(tag => tag.name === activeTag.value)
+    if (tagObj && Array.isArray(tagObj.posts)) {
+      result = tagObj.posts.filter(post => post && typeof post === 'object' && post.title && post.url)
+    }
+  }
+  
+  // 按搜索关键词筛选
+  if (searchQuery.value) {
+    const query = searchQuery.value.toLowerCase()
+    result = result.filter(post => 
+      post.title.toLowerCase().includes(query) || 
+      (post.description && post.description.toLowerCase().includes(query)) ||
+      (post.tags && post.tags.some(tag => tag.toLowerCase().includes(query)))
+    )
+  }
+  
+  return result
 })
-// const filteredPosts = computed(() => {
-//   if (!activeTag.value) return []
-//   const found = tags.value.find(tag => tag.name === activeTag.value)
-//   return found ? found.posts.filter(post => post && post.title) : []
-// })
 
 // 设置活动标签
 function setActiveTag(tag) {
   activeTag.value = tag
   // 更新URL hash但不刷新页面
-  if (tag) {
+  if (tag && tag !== 'all' && tag !== '全部') {
     window.history.replaceState(null, null, `#${tag}`)
   } else {
     window.history.replaceState(null, null, window.location.pathname)
   }
 }
 
+// 处理TagBar组件的搜索事件
+const handleSearch = (query) => {
+  searchQuery.value = query
+}
+
+// 处理TagBar组件的标签变化事件
+const handleTagChange = (tag) => {
+  if (tag === '全部') {
+    setActiveTag('all')
+  } else {
+    setActiveTag(tag)
+  }
+}
+
+// 清除筛选
+const clearFilters = () => {
+  searchQuery.value = ''
+  setActiveTag('all')
+}
+
 // 初始化：从URL hash中获取标签
-// function initFromHash() {
-//   const hash = window.location.hash
-//   if (hash) {
-//     const tag = decodeURIComponent(hash.slice(1))
-//     if (tags.value.some(t => t.name === tag)) {
-//       setActiveTag(tag)
-//     }
-//   }
-// }
 function initFromHash() {
   const hash = window.location.hash
   if (hash) {
     const tag = decodeURIComponent(hash.slice(1))
     if (tags.value.some(t => t.name === tag)) {
-      // 添加延迟确保数据加载完成
       nextTick(() => {
         setActiveTag(tag)
       })
     }
+  } else {
+    // 默认显示全部文章
+    setActiveTag('all')
   }
 }
+
 onMounted(() => {
   initFromHash()
   window.addEventListener('hashchange', initFromHash)
@@ -96,161 +116,254 @@ onMounted(() => {
 
 </script>
 
-<div class="tags-container">
-  <div class="tags-list">
-    <div 
-      v-for="tag in tags" 
-      :key="tag.name"
-      class="tag-item"
-      :class="{ active: activeTag === tag.name }"
-      @click="setActiveTag(tag.name)"
-    >
-      <span class="tag-name">{{ tag.name }}</span>
-      <span class="tag-count">{{ tag.count }}</span>
-    </div>
-  </div>
-  
-  <div v-if="activeTag" class="tag-posts">
-    <h2>{{ activeTag }} <button class="clear-btn" @click="setActiveTag('')">清除</button></h2>
-    
-  <div class="posts-list">
-    <template v-for="post in filteredPosts" :key="post?.url">
-      <div v-if="post && post.title" class="post-item">
-        <div class="post-title">
-          <a :href="post?.url">{{ post?.title }}</a>
-        </div>
-        <div class="post-meta">
-          <span v-if="post?.date" class="post-date">{{ post?.date }}</span>
-        </div>
-        <div v-if="post?.description" class="post-description">
-          {{ post?.description }}
-        </div>
-      </div>
-    </template>
+<!-- <div class="page-header">
+  <h1>📂 文章标签</h1>
+  <p>按标签浏览所有文章</p>
+</div> -->
+
+<!-- 标签栏组件 -->
+<TagBar @search="handleSearch" @tagChange="handleTagChange" />
+
+<div class="content-wrapper">
+  <div v-if="filteredPosts.length === 0" class="no-results">
+    <p>没有找到匹配的文章</p>
   </div>
 
-  </div>
-  
-  <div v-else class="tag-instruction">
-    <p>👈 点击左侧标签查看相关文章</p>
+  <div v-else class="posts-list">
+    <div v-for="post in filteredPosts" :key="post.url" class="post-item">
+      <div class="post-date">{{ post.date }}</div>
+      <div class="post-content">
+        <h3 class="post-title">
+          <a :href="post.url">{{ post.title }}</a>
+        </h3>
+        <p v-if="post.description" class="post-description">{{ post.description }}</p>
+      </div>
+    </div>
   </div>
 </div>
 
-<style>
-.tags-container {
-  display: flex;
-  gap: 2rem;
+<style scoped>
+/* 页面容器 */
+.VPContent {
+  max-width: 1400px !important;
+  margin: 0 auto;
+  padding: 0 24px;
 }
 
-.tags-list {
-  flex: 0 0 200px;
-  border-right: 1px solid var(--vp-c-divider);
-  padding-right: 1rem;
+/* 页面头部 */
+.page-header {
+  margin-bottom: 2rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--vp-c-divider);
+  max-width: 1400px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
-.tag-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0.5rem;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: background-color 0.2s;
-  margin-bottom: 0.5rem;
+.page-header h1 {
+  font-size: 1.8rem;
+  margin: 0 0 0.5rem 0;
+  color: var(--vp-c-text-1);
 }
 
-.tag-item:hover {
-  background-color: var(--vp-c-bg-soft);
-}
-
-.tag-item.active {
-  background-color: var(--vp-c-brand-soft);
-  color: var(--vp-c-brand-dark);
-}
-
-.tag-count {
-  font-size: 0.8rem;
-  background-color: var(--vp-c-bg-soft);
-  border-radius: 10px;
-  padding: 0.1rem 0.5rem;
+.page-header p {
+  margin: 0;
   color: var(--vp-c-text-2);
+  font-size: 0.9rem;
 }
 
-.tag-item.active .tag-count {
-  background-color: var(--vp-c-brand-dim);
-  color: var(--vp-c-brand-dark);
+/* 内容区域优化 */
+.content-wrapper {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 24px;
 }
 
-.tag-posts {
-  flex: 1;
-}
 
-.tag-instruction {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+/* 无结果状态 */
+.no-results {
+  text-align: center;
+  padding: 4rem 2rem;
   color: var(--vp-c-text-2);
-  font-size: 1.2rem;
+  font-size: 1rem;
+  background: var(--vp-c-bg-soft);
+  border-radius: 16px;
+  margin: 2rem 0;
 }
 
-.clear-btn {
-  font-size: 0.8rem;
-  padding: 0.2rem 0.5rem;
-  background-color: var(--vp-c-bg-soft);
-  border: 1px solid var(--vp-c-divider);
-  border-radius: 4px;
-  cursor: pointer;
-  margin-left: 0.5rem;
+.no-results::before {
+  content: '🔍';
+  display: block;
+  font-size: 3rem;
+  margin-bottom: 1rem;
+  opacity: 0.5;
 }
 
+/* 文章列表 */
 .posts-list {
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
   gap: 1.5rem;
+  margin-bottom: 2rem;
 }
 
 .post-item {
-  border-bottom: 1px solid var(--vp-c-divider);
-  padding-bottom: 1.5rem;
+  background: var(--vp-c-bg);
+  border: 2px solid var(--vp-c-divider);
+  border-radius: 16px;
+  padding: 1.5rem;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  position: relative;
+  overflow: hidden;
+}
+
+.post-item::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, var(--vp-c-brand-1), var(--vp-c-brand-2));
+  transform: scaleX(0);
+  transition: transform 0.3s ease;
+}
+
+.post-item:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+  border-color: var(--vp-c-brand-1);
+}
+
+.post-item:hover::before {
+  transform: scaleX(1);
+}
+
+.post-date {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.8rem;
+  color: var(--vp-c-text-3);
+  margin-bottom: 1rem;
+  padding: 0.25rem 0.75rem;
+  background: var(--vp-c-bg-soft);
+  border-radius: 20px;
+  font-weight: 500;
+}
+
+.post-date::before {
+  content: '📅';
+  font-size: 0.9rem;
+}
+
+.post-content {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
 }
 
 .post-title {
-  font-size: 1.2rem;
+  font-size: 1.1rem;
   font-weight: 600;
-  margin-bottom: 0.5rem;
+  margin: 0;
+  line-height: 1.4;
 }
 
-.post-meta {
-  font-size: 0.9rem;
-  color: var(--vp-c-text-2);
-  margin-bottom: 0.5rem;
+.post-title a {
+  color: var(--vp-c-text-1);
+  text-decoration: none;
+  transition: color 0.2s ease;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.post-title a:hover {
+  color: var(--vp-c-brand-1);
 }
 
 .post-description {
-  font-size: 1rem;
+  font-size: 0.9rem;
   color: var(--vp-c-text-2);
+  margin: 0;
+  line-height: 1.5;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+
+
+/* 响应式设计 */
+@media (max-width: 1024px) {
+  .posts-list {
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.25rem;
+  }
 }
 
 @media (max-width: 768px) {
-  .tags-container {
-    flex-direction: column;
+  .content-wrapper {
+    padding: 0 16px;
   }
   
-  .tags-list {
-    flex: none;
-    border-right: none;
-    border-bottom: 1px solid var(--vp-c-divider);
-    padding-right: 0;
-    padding-bottom: 1rem;
-    margin-bottom: 1rem;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.5rem;
+  .posts-list {
+    grid-template-columns: 1fr;
+    gap: 1rem;
   }
   
-  .tag-item {
-    margin-bottom: 0;
+  .post-item {
+    padding: 1.25rem;
+  }
+  
+  .post-title {
+    font-size: 1rem;
+  }
+  
+  .post-description {
+    font-size: 0.85rem;
+    -webkit-line-clamp: 2;
+  }
+  
+  .no-results {
+    padding: 3rem 1.5rem;
+  }
+  
+  .no-results::before {
+    font-size: 2.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .post-item {
+    padding: 1rem;
+    border-radius: 12px;
+  }
+  
+  .post-date {
+    font-size: 0.75rem;
+    padding: 0.2rem 0.6rem;
+  }
+  
+  .post-title {
+    font-size: 0.95rem;
+  }
+  
+  .post-description {
+    font-size: 0.8rem;
+  }
+  
+  .no-results {
+    padding: 2rem 1rem;
+    font-size: 0.9rem;
+  }
+  
+  .no-results::before {
+    font-size: 2rem;
   }
 }
 

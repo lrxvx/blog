@@ -24,19 +24,18 @@ export default defineConfig({
     // 导航栏
     nav: [
       { text: '首页', link: '/' },
-      { text: '博客', link: '/posts/' },
-      { text: '标签', link: '/tags/' },
+      { text: '博客', link: '/tags/' },
       { text: '关于', link: '/about/' },
       { text: '统计', link: '/about/stats' },
     ],
     
     // 侧边栏
     sidebar: {
-      '/posts/': [
+      '/tags/': [
         {
-          text: '博客文章',
+          text: '文章标签',
           items: [
-            { text: '所有文章', link: '/posts/' },
+            { text: '所有文章', link: '/tags/' },
           ]
         }
       ],
