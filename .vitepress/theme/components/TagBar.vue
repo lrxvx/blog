@@ -239,12 +239,25 @@ const setActiveTag = (tagName) => {
   // 触发标签变化事件
   emits('tagChange', tagName)
   
-  // 更新URL
+  // 检查当前是否在文章页面，如果是则跳转到标签页面
   if (typeof window !== 'undefined') {
-    if (tagName === '全部') {
-      window.history.replaceState(null, null, '/tags/')
+    const currentPath = window.location.pathname
+    const isPostPage = currentPath.startsWith('/posts/') && !currentPath.endsWith('/posts/')
+    
+    if (isPostPage) {
+      // 在文章页面时，跳转到标签页面
+      if (tagName === '全部') {
+        router.go('/tags/')
+      } else {
+        router.go(`/tags/#${encodeURIComponent(tagName)}`)
+      }
     } else {
-      window.history.replaceState(null, null, `/tags/#${encodeURIComponent(tagName)}`)
+      // 在标签页面时，只更新URL hash
+      if (tagName === '全部') {
+        window.history.replaceState(null, null, '/tags/')
+      } else {
+        window.history.replaceState(null, null, `/tags/#${encodeURIComponent(tagName)}`)
+      }
     }
   }
 }

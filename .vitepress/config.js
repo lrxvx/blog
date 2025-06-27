@@ -31,14 +31,6 @@ export default defineConfig({
     
     // 侧边栏
     sidebar: {
-      '/tags/': [
-        {
-          text: '文章标签',
-          items: [
-            { text: '所有文章', link: '/tags/' },
-          ]
-        }
-      ],
       '/about/': [
         {
           text: '关于',
