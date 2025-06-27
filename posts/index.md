@@ -1,7 +1,3 @@
----
-title: 博客文章
-description: 所有博客文章的列表
----
 
 <script setup>
 import { data as posts } from '../.vitepress/theme/composables/posts.data.js'

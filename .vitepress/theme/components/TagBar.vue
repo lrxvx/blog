@@ -57,7 +57,7 @@
             v-for="tag in mainTags" 
             :key="tag.name"
             class="tag-item"
-            @mouseenter="showDropdown = tag.name"
+            @mouseenter="() => { cancelHideDropdown(); showDropdown = tag.name; }"
             @mouseleave="hideDropdown"
           >
             <button 
@@ -73,6 +73,8 @@
             <div 
               v-if="tag.children && tag.children.length > 0" 
               :class="['dropdown-menu', { show: showDropdown === tag.name }]"
+              @mouseenter="() => { cancelHideDropdown(); showDropdown = tag.name; }"
+              @mouseleave="hideDropdown"
             >
               <div class="dropdown-header">{{ tag.displayName }} 子标签</div>
               <button 
@@ -266,10 +268,22 @@ const clearSearch = () => {
 }
 
 // 隐藏下拉菜单
+let hideDropdownTimer = null
 const hideDropdown = () => {
-  setTimeout(() => {
+  if (hideDropdownTimer) {
+    clearTimeout(hideDropdownTimer)
+  }
+  hideDropdownTimer = setTimeout(() => {
     showDropdown.value = ''
-  }, 150)
+  }, 300)
+}
+
+// 取消隐藏下拉菜单
+const cancelHideDropdown = () => {
+  if (hideDropdownTimer) {
+    clearTimeout(hideDropdownTimer)
+    hideDropdownTimer = null
+  }
 }
 
 // 从URL hash获取当前标签
@@ -297,21 +311,19 @@ onMounted(() => {
 <style scoped>
 /* 为页面内容添加顶部间距，避免被固定标签栏遮挡 */
 :global(.VPContent) {
-  padding-top: 140px;
+  padding-top: 20px;
 }
 
 .tag-bar-container {
   background: linear-gradient(135deg, var(--vp-c-bg) 0%, var(--vp-c-bg-soft) 100%);
   border-bottom: 1px solid var(--vp-c-divider);
   padding: 1.5rem 0;
-  position: fixed;
-  top: var(--vp-nav-height);
-  left: 0;
-  right: 0;
-  z-index: 100;
+  position: relative;
+  z-index: 10;
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+  margin-bottom: 2rem;
 }
 
 .tag-bar-content {
@@ -584,7 +596,7 @@ onMounted(() => {
 
 @media (max-width: 768px) {
   :global(.VPContent) {
-    padding-top: 160px;
+    padding-top: 20px;
   }
   
   .tag-bar-container {
