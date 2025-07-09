@@ -340,7 +340,7 @@ onMounted(() => {
 }
 
 .tag-bar-content {
-  max-width: 1400px;
+  max-width: none;
   margin: 0 auto;
   padding: 0 24px;
   display: flex;

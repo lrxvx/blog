@@ -144,7 +144,7 @@ onMounted(() => {
 <style scoped>
 /* 页面容器 */
 .VPContent {
-  max-width: 1400px !important;
+  max-width: none !important;
   margin: 0 auto;
   padding: 0 24px;
 }
@@ -154,7 +154,7 @@ onMounted(() => {
   margin-bottom: 2rem;
   padding-bottom: 1rem;
   border-bottom: 1px solid var(--vp-c-divider);
-  max-width: 1400px;
+  max-width: none;
   margin-left: auto;
   margin-right: auto;
 }
@@ -173,7 +173,7 @@ onMounted(() => {
 
 /* 内容区域优化 */
 .content-wrapper {
-  max-width: 1400px;
+  max-width: none;
   margin: 0 auto;
   padding: 0 24px;
 }

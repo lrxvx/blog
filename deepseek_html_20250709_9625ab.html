@@ -1,0 +1,1189 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>技术博客 - 探索前端开发世界</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #4361ee;
+            --secondary-color: #3f37c9;
+            --accent-color: #4895ef;
+            --light-color: #f8f9fa;
+            --dark-color: #212529;
+            --gray-color: #6c757d;
+            --light-gray: #e9ecef;
+            --border-radius: 8px;
+            --box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--dark-color);
+            background-color: #f5f7fb;
+        }
+
+        a {
+            text-decoration: none;
+            color: var(--primary-color);
+            transition: var(--transition);
+        }
+
+        a:hover {
+            color: var(--secondary-color);
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header Styles */
+        header {
+            background-color: white;
+            box-shadow: var(--box-shadow);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+
+        .logo span {
+            color: var(--secondary-color);
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+        }
+
+        nav ul li {
+            margin-left: 30px;
+        }
+
+        nav ul li a {
+            font-weight: 500;
+            position: relative;
+        }
+
+        nav ul li a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background-color: var(--primary-color);
+            transition: var(--transition);
+        }
+
+        nav ul li a:hover::after {
+            width: 100%;
+        }
+
+        .search-bar {
+            display: flex;
+            margin-left: 20px;
+        }
+
+        .search-bar input {
+            padding: 8px 15px;
+            border: 1px solid var(--light-gray);
+            border-radius: var(--border-radius) 0 0 var(--border-radius);
+            outline: none;
+            width: 200px;
+        }
+
+        .search-bar button {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .search-bar button:hover {
+            background: var(--secondary-color);
+        }
+
+        .mobile-menu-btn {
+            display: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 80px 0;
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        .hero h1 {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            max-width: 700px;
+            margin: 0 auto 30px;
+            opacity: 0.9;
+        }
+
+        .btn {
+            display: inline-block;
+            background: white;
+            color: var(--primary-color);
+            padding: 12px 30px;
+            border-radius: 30px;
+            font-weight: 600;
+            transition: var(--transition);
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Main Content */
+        .main-content {
+            display: flex;
+            gap: 30px;
+            margin-bottom: 50px;
+        }
+
+        .articles {
+            flex: 2;
+        }
+
+        .sidebar {
+            flex: 1;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--light-gray);
+            position: relative;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 60px;
+            height: 2px;
+            background: var(--primary-color);
+        }
+
+        /* Article Card */
+        .article-card {
+            background: white;
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: var(--box-shadow);
+            margin-bottom: 30px;
+            transition: var(--transition);
+        }
+
+        .article-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .article-image {
+            height: 200px;
+            width: 100%;
+            background: linear-gradient(45deg, #4361ee, #4895ef);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 2rem;
+            font-weight: bold;
+        }
+
+        .article-content {
+            padding: 25px;
+        }
+
+        .article-meta {
+            display: flex;
+            margin-bottom: 15px;
+            font-size: 0.9rem;
+            color: var(--gray-color);
+        }
+
+        .article-meta span {
+            margin-right: 15px;
+            display: flex;
+            align-items: center;
+        }
+
+        .article-meta i {
+            margin-right: 5px;
+        }
+
+        .article-title {
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+        }
+
+        .article-excerpt {
+            margin-bottom: 20px;
+            color: var(--gray-color);
+        }
+
+        .read-more {
+            display: inline-flex;
+            align-items: center;
+            font-weight: 600;
+        }
+
+        .read-more i {
+            margin-left: 5px;
+            transition: var(--transition);
+        }
+
+        .read-more:hover i {
+            transform: translateX(5px);
+        }
+
+        .tags {
+            display: flex;
+            flex-wrap: wrap;
+            margin-top: 15px;
+        }
+
+        .tag {
+            background: var(--light-gray);
+            color: var(--gray-color);
+            padding: 5px 12px;
+            border-radius: 30px;
+            font-size: 0.8rem;
+            margin-right: 10px;
+            margin-bottom: 10px;
+            transition: var(--transition);
+        }
+
+        .tag:hover {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        /* Sidebar Styles */
+        .sidebar-widget {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 25px;
+            box-shadow: var(--box-shadow);
+            margin-bottom: 30px;
+        }
+
+        .categories ul {
+            list-style: none;
+        }
+
+        .categories li {
+            padding: 12px 0;
+            border-bottom: 1px solid var(--light-gray);
+        }
+
+        .categories li:last-child {
+            border-bottom: none;
+        }
+
+        .categories a {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .popular-posts .post {
+            display: flex;
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--light-gray);
+        }
+
+        .popular-posts .post:last-child {
+            margin-bottom: 0;
+            padding-bottom: 0;
+            border-bottom: none;
+        }
+
+        .post-image {
+            width: 80px;
+            height: 60px;
+            background: var(--light-gray);
+            border-radius: 5px;
+            margin-right: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary-color);
+            font-size: 1.5rem;
+        }
+
+        .post-content h4 {
+            font-size: 0.95rem;
+            margin-bottom: 5px;
+        }
+
+        .post-content .post-date {
+            font-size: 0.8rem;
+            color: var(--gray-color);
+        }
+
+        .newsletter input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--light-gray);
+            border-radius: var(--border-radius);
+            margin-bottom: 15px;
+            outline: none;
+        }
+
+        .newsletter .btn {
+            width: 100%;
+            text-align: center;
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .newsletter .btn:hover {
+            background: var(--secondary-color);
+        }
+
+        /* Pagination */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            margin: 30px 0;
+        }
+
+        .pagination a {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 5px;
+            border-radius: 50%;
+            background: white;
+            color: var(--dark-color);
+            box-shadow: var(--box-shadow);
+            transition: var(--transition);
+        }
+
+        .pagination a:hover, .pagination a.active {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        /* Footer */
+        footer {
+            background: var(--dark-color);
+            color: white;
+            padding: 60px 0 30px;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .footer-widget h3 {
+            font-size: 1.3rem;
+            margin-bottom: 20px;
+            position: relative;
+            padding-bottom: 10px;
+        }
+
+        .footer-widget h3::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 40px;
+            height: 2px;
+            background: var(--primary-color);
+        }
+
+        .footer-widget p {
+            margin-bottom: 20px;
+            opacity: 0.8;
+        }
+
+        .footer-links li {
+            margin-bottom: 10px;
+            list-style: none;
+        }
+
+        .footer-links a {
+            color: rgba(255, 255, 255, 0.8);
+            transition: var(--transition);
+        }
+
+        .footer-links a:hover {
+            color: white;
+            padding-left: 5px;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 15px;
+        }
+
+        .social-links a {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+        }
+
+        .social-links a:hover {
+            background: var(--primary-color);
+            transform: translateY(-5px);
+        }
+
+        .copyright {
+            text-align: center;
+            padding-top: 30px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            opacity: 0.7;
+            font-size: 0.9rem;
+        }
+
+        /* Article Detail Page */
+        .article-detail {
+            background: white;
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: var(--box-shadow);
+            margin-bottom: 30px;
+            padding: 40px;
+        }
+
+        .article-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .article-header h1 {
+            font-size: 2.2rem;
+            margin-bottom: 20px;
+        }
+
+        .article-header .article-meta {
+            justify-content: center;
+        }
+
+        .article-body {
+            line-height: 1.8;
+        }
+
+        .article-body h2 {
+            margin: 40px 0 20px;
+            color: var(--secondary-color);
+        }
+
+        .article-body p {
+            margin-bottom: 20px;
+        }
+
+        .article-body img {
+            max-width: 100%;
+            border-radius: var(--border-radius);
+            margin: 20px 0;
+        }
+
+        .article-body blockquote {
+            background: var(--light-gray);
+            border-left: 4px solid var(--primary-color);
+            padding: 20px;
+            margin: 30px 0;
+            font-style: italic;
+        }
+
+        .article-footer {
+            margin-top: 40px;
+            padding-top: 30px;
+            border-top: 1px solid var(--light-gray);
+        }
+
+        .article-tags {
+            display: flex;
+            flex-wrap: wrap;
+        }
+
+        /* Comments Section */
+        .comments-section {
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+
+        .comment {
+            display: flex;
+            margin-bottom: 30px;
+            padding-bottom: 30px;
+            border-bottom: 1px solid var(--light-gray);
+        }
+
+        .comment:last-child {
+            margin-bottom: 0;
+            padding-bottom: 0;
+            border-bottom: none;
+        }
+
+        .comment-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: var(--light-gray);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 20px;
+            color: var(--primary-color);
+            font-size: 1.5rem;
+            flex-shrink: 0;
+        }
+
+        .comment-content h4 {
+            margin-bottom: 5px;
+        }
+
+        .comment-date {
+            font-size: 0.9rem;
+            color: var(--gray-color);
+            margin-bottom: 15px;
+        }
+
+        .comment-reply {
+            margin-top: 15px;
+            color: var(--primary-color);
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .reply-form {
+            margin-top: 20px;
+            display: none;
+        }
+
+        .reply-form.active {
+            display: block;
+        }
+
+        /* Comment Form */
+        .comment-form {
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            padding: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid var(--light-gray);
+            border-radius: var(--border-radius);
+            outline: none;
+            transition: var(--transition);
+        }
+
+        .form-control:focus {
+            border-color: var(--primary-color);
+        }
+
+        textarea.form-control {
+            min-height: 150px;
+            resize: vertical;
+        }
+
+        .form-submit {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: var(--border-radius);
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .form-submit:hover {
+            background: var(--secondary-color);
+        }
+
+        /* Breadcrumb */
+        .breadcrumb {
+            padding: 20px 0;
+            margin-bottom: 30px;
+        }
+
+        .breadcrumb a {
+            color: var(--gray-color);
+        }
+
+        .breadcrumb a:hover {
+            color: var(--primary-color);
+        }
+
+        .breadcrumb span {
+            margin: 0 10px;
+            color: var(--gray-color);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 992px) {
+            .main-content {
+                flex-direction: column;
+            }
+            
+            .hero h1 {
+                font-size: 2rem;
+            }
+            
+            .article-title {
+                font-size: 1.3rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .mobile-menu-btn {
+                display: block;
+            }
+            
+            nav {
+                position: fixed;
+                top: 80px;
+                left: 0;
+                width: 100%;
+                background: white;
+                box-shadow: var(--box-shadow);
+                padding: 20px;
+                transform: translateY(-150%);
+                opacity: 0;
+                transition: var(--transition);
+            }
+            
+            nav.active {
+                transform: translateY(0);
+                opacity: 1;
+            }
+            
+            nav ul {
+                flex-direction: column;
+            }
+            
+            nav ul li {
+                margin: 15px 0;
+            }
+            
+            .search-bar {
+                margin: 15px 0 0;
+                width: 100%;
+            }
+            
+            .search-bar input {
+                width: 100%;
+            }
+            
+            .header-container {
+                padding: 15px 0;
+            }
+            
+            .hero {
+                padding: 60px 0;
+            }
+            
+            .article-detail {
+                padding: 25px;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .hero {
+                padding: 40px 0;
+            }
+            
+            .hero h1 {
+                font-size: 1.8rem;
+            }
+            
+            .article-meta {
+                flex-direction: column;
+            }
+            
+            .article-meta span {
+                margin-bottom: 8px;
+            }
+            
+            .comment {
+                flex-direction: column;
+            }
+            
+            .comment-avatar {
+                margin-bottom: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container header-container">
+            <div class="logo">技术<span>博客</span></div>
+            <div class="mobile-menu-btn">
+                <i class="fas fa-bars"></i>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="#" class="active">首页</a></li>
+                    <li><a href="#">前端开发</a></li>
+                    <li><a href="#">后端技术</a></li>
+                    <li><a href="#">数据库</a></li>
+                    <li><a href="#">DevOps</a></li>
+                    <li><a href="#">关于我们</a></li>
+                </ul>
+                <div class="search-bar">
+                    <input type="text" placeholder="搜索文章...">
+                    <button><i class="fas fa-search"></i></button>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <h1>探索前端开发的世界</h1>
+            <p>分享最新的Web开发技术、框架和最佳实践，帮助开发者提升技能，构建更好的Web应用</p>
+            <a href="#" class="btn">开始阅读</a>
+        </div>
+    </section>
+
+    <!-- Breadcrumb -->
+    <div class="container breadcrumb">
+        <a href="#">首页</a>
+        <span>/</span>
+        <a href="#">前端开发</a>
+        <span>/</span>
+        <span>React Hooks 完全指南：从入门到精通</span>
+    </div>
+
+    <!-- Main Content -->
+    <div class="container main-content">
+        <div class="articles">
+            <!-- Article Detail -->
+            <div class="article-detail">
+                <div class="article-header">
+                    <h1>React Hooks 完全指南：从入门到精通</h1>
+                    <div class="article-meta">
+                        <span><i class="far fa-user"></i> 张明</span>
+                        <span><i class="far fa-calendar"></i> 2023年10月15日</span>
+                        <span><i class="far fa-clock"></i> 8分钟阅读</span>
+                        <span><i class="far fa-comments"></i> 24条评论</span>
+                    </div>
+                </div>
+                
+                <div class="article-body">
+                    <p>React Hooks 自 React 16.8 版本引入以来，彻底改变了我们编写 React 组件的方式。它们提供了一种更直接的方式来使用 React 的特性，如状态和生命周期方法，而无需编写类组件。本指南将带你从基础概念到高级技巧，全面掌握 React Hooks。</p>
+                    
+                    <h2>什么是 React Hooks？</h2>
+                    <p>React Hooks 是让你在函数组件中"钩入" React 状态及生命周期等特性的函数。它们使你在无需修改组件结构的情况下复用状态逻辑，解决了在组件之间复用状态逻辑很难的问题。</p>
+                    
+                    <div class="article-image">React Hooks 示意图</div>
+                    
+                    <h2>基础 Hooks</h2>
+                    <h3>useState</h3>
+                    <p>useState 是最基本的 Hook，它允许你在函数组件中添加 React 状态。</p>
+                    
+                    <pre><code>import React, { useState } from 'react';
+
+function Counter() {
+  const [count, setCount] = useState(0);
+
+  return (
+    &lt;div&gt;
+      &lt;p&gt;You clicked {count} times&lt;/p&gt;
+      &lt;button onClick={() => setCount(count + 1)}&gt;
+        Click me
+      &lt;/button&gt;
+    &lt;/div&gt;
+  );
+}</code></pre>
+                    
+                    <h3>useEffect</h3>
+                    <p>useEffect Hook 让你在函数组件中执行副作用操作（数据获取、订阅或者手动修改DOM等）。</p>
+                    
+                    <pre><code>import React, { useState, useEffect } from 'react';
+
+function Example() {
+  const [count, setCount] = useState(0);
+
+  useEffect(() => {
+    document.title = `You clicked ${count} times`;
+  });
+
+  return (
+    &lt;div&gt;
+      &lt;p&gt;You clicked {count} times&lt;/p&gt;
+      &lt;button onClick={() => setCount(count + 1)}&gt;
+        Click me
+      &lt;/button&gt;
+    &lt;/div&gt;
+  );
+}</code></pre>
+                    
+                    <h2>高级 Hooks</h2>
+                    <h3>useContext</h3>
+                    <p>useContext 让你能够订阅 React 的 Context 而不需要使用嵌套的组件。</p>
+                    
+                    <h3>useReducer</h3>
+                    <p>useReducer 是 useState 的替代方案，适用于复杂的状态逻辑。</p>
+                    
+                    <blockquote>
+                        <p>提示：使用 useReducer 管理包含多个子值的状态对象，或者下一个状态依赖于之前的状态时特别有用。</p>
+                    </blockquote>
+                    
+                    <h2>自定义 Hooks</h2>
+                    <p>自定义 Hook 是一个函数，其名称以 "use" 开头，函数内部可以调用其他的 Hook。通过自定义 Hook，可以将组件逻辑提取到可重用的函数中。</p>
+                    
+                    <pre><code>import { useState, useEffect } from 'react';
+
+function useWindowWidth() {
+  const [width, setWidth] = useState(window.innerWidth);
+
+  useEffect(() => {
+    const handleResize = () => setWidth(window.innerWidth);
+    window.addEventListener('resize', handleResize);
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
+
+  return width;
+}</code></pre>
+                    
+                    <h2>Hooks 最佳实践</h2>
+                    <ul>
+                        <li>只在最顶层使用 Hook</li>
+                        <li>只在 React 函数中调用 Hook</li>
+                        <li>使用 linter 插件来强制执行 Hook 规则</li>
+                        <li>将复杂逻辑拆分为多个 effect</li>
+                        <li>使用 useCallback 和 useMemo 优化性能</li>
+                    </ul>
+                    
+                    <p>通过本指南，你应该对 React Hooks 有了全面的了解。Hooks 不仅简化了 React 组件的编写，还提供了更强大的代码复用能力。随着 React 生态的发展，Hooks 已经成为现代 React 开发的基石。</p>
+                </div>
+                
+                <div class="article-footer">
+                    <div class="tags">
+                        <a href="#" class="tag">React</a>
+                        <a href="#" class="tag">JavaScript</a>
+                        <a href="#" class="tag">前端开发</a>
+                        <a href="#" class="tag">Hooks</a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Comments Section -->
+            <div class="comments-section">
+                <h2 class="section-title">评论 (24)</h2>
+                
+                <div class="comment">
+                    <div class="comment-avatar">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <div class="comment-content">
+                        <h4>李华</h4>
+                        <div class="comment-date">2023年10月16日 14:23</div>
+                        <p>非常感谢作者的分享！这篇文章解决了我一直困惑的 useEffect 清理问题，示例代码非常清晰易懂。</p>
+                        <div class="comment-reply">回复</div>
+                        <div class="reply-form">
+                            <div class="form-group">
+                                <textarea class="form-control" placeholder="写下你的回复..."></textarea>
+                            </div>
+                            <button class="form-submit">提交回复</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="comment">
+                    <div class="comment-avatar">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <div class="comment-content">
+                        <h4>王伟</h4>
+                        <div class="comment-date">2023年10月15日 19:45</div>
+                        <p>自定义 Hooks 部分写得特别好，我之前一直没理解如何创建自己的 Hook，现在终于明白了。期待更多关于 React 性能优化的文章！</p>
+                        <div class="comment-reply">回复</div>
+                        <div class="reply-form">
+                            <div class="form-group">
+                                <textarea class="form-control" placeholder="写下你的回复..."></textarea>
+                            </div>
+                            <button class="form-submit">提交回复</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="comment">
+                    <div class="comment-avatar">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <div class="comment-content">
+                        <h4>陈静</h4>
+                        <div class="comment-date">2023年10月15日 10:31</div>
+                        <p>作为 React 新手，这篇文章对我帮助很大。特别是 useState 和 useEffect 的对比示例，让我理解了函数组件如何管理状态和副作用。</p>
+                        <div class="comment-reply">回复</div>
+                        <div class="reply-form">
+                            <div class="form-group">
+                                <textarea class="form-control" placeholder="写下你的回复..."></textarea>
+                            </div>
+                            <button class="form-submit">提交回复</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Comment Form -->
+            <div class="comment-form">
+                <h2 class="section-title">发表评论</h2>
+                <form>
+                    <div class="form-group">
+                        <label for="name">姓名 *</label>
+                        <input type="text" id="name" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">邮箱 *</label>
+                        <input type="email" id="email" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="comment">评论 *</label>
+                        <textarea id="comment" class="form-control" required></textarea>
+                    </div>
+                    <button type="submit" class="form-submit">提交评论</button>
+                </form>
+            </div>
+        </div>
+        
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="sidebar-widget categories">
+                <h3 class="section-title">分类</h3>
+                <ul>
+                    <li><a href="#">前端开发 <span>(128)</span></a></li>
+                    <li><a href="#">JavaScript <span>(86)</span></a></li>
+                    <li><a href="#">React <span>(54)</span></a></li>
+                    <li><a href="#">Vue <span>(42)</span></a></li>
+                    <li><a href="#">Node.js <span>(37)</span></a></li>
+                    <li><a href="#">CSS <span>(29)</span></a></li>
+                    <li><a href="#">TypeScript <span>(26)</span></a></li>
+                </ul>
+            </div>
+            
+            <div class="sidebar-widget popular-posts">
+                <h3 class="section-title">热门文章</h3>
+                <div class="post">
+                    <div class="post-image">
+                        <i class="fab fa-react"></i>
+                    </div>
+                    <div class="post-content">
+                        <h4><a href="#">React 18 新特性解析</a></h4>
+                        <div class="post-date">2023年9月20日</div>
+                    </div>
+                </div>
+                <div class="post">
+                    <div class="post-image">
+                        <i class="fab fa-js"></i>
+                    </div>
+                    <div class="post-content">
+                        <h4><a href="#">JavaScript 性能优化技巧</a></h4>
+                        <div class="post-date">2023年9月12日</div>
+                    </div>
+                </div>
+                <div class="post">
+                    <div class="post-image">
+                        <i class="fab fa-vuejs"></i>
+                    </div>
+                    <div class="post-content">
+                        <h4><a href="#">Vue 3 Composition API 实战</a></h4>
+                        <div class="post-date">2023年9月5日</div>
+                    </div>
+                </div>
+                <div class="post">
+                    <div class="post-image">
+                        <i class="fas fa-server"></i>
+                    </div>
+                    <div class="post-content">
+                        <h4><a href="#">Node.js 最佳实践</a></h4>
+                        <div class="post-date">2023年8月28日</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="sidebar-widget newsletter">
+                <h3 class="section-title">订阅更新</h3>
+                <p>获取最新的技术文章和开发资源</p>
+                <form>
+                    <input type="email" class="form-control" placeholder="您的邮箱地址" required>
+                    <button type="submit" class="btn">立即订阅</button>
+                </form>
+            </div>
+            
+            <div class="sidebar-widget">
+                <h3 class="section-title">标签云</h3>
+                <div class="tags">
+                    <a href="#" class="tag">JavaScript</a>
+                    <a href="#" class="tag">React</a>
+                    <a href="#" class="tag">Vue</a>
+                    <a href="#" class="tag">CSS</a>
+                    <a href="#" class="tag">Node.js</a>
+                    <a href="#" class="tag">TypeScript</a>
+                    <a href="#" class="tag">Webpack</a>
+                    <a href="#" class="tag">性能优化</a>
+                    <a href="#" class="tag">前端框架</a>
+                    <a href="#" class="tag">响应式设计</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-widget">
+                    <h3>关于我们</h3>
+                    <p>技术博客是一个专注于Web开发技术的平台，我们致力于分享高质量的技术文章、教程和资源，帮助开发者成长。</p>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-github"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                    </div>
+                </div>
+                
+                <div class="footer-widget">
+                    <h3>热门分类</h3>
+                    <ul class="footer-links">
+                        <li><a href="#">前端开发</a></li>
+                        <li><a href="#">JavaScript</a></li>
+                        <li><a href="#">React</a></li>
+                        <li><a href="#">Vue.js</a></li>
+                        <li><a href="#">Node.js</a></li>
+                        <li><a href="#">CSS</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-widget">
+                    <h3>快速链接</h3>
+                    <ul class="footer-links">
+                        <li><a href="#">首页</a></li>
+                        <li><a href="#">关于我们</a></li>
+                        <li><a href="#">联系我们</a></li>
+                        <li><a href="#">投稿指南</a></li>
+                        <li><a href="#">隐私政策</a></li>
+                        <li><a href="#">使用条款</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-widget">
+                    <h3>联系我们</h3>
+                    <ul class="footer-links">
+                        <li><i class="fas fa-envelope"></i> contact@techblog.com</li>
+                        <li><i class="fas fa-phone"></i> +86 123 4567 8910</li>
+                        <li><i class="fas fa-map-marker-alt"></i> 北京市海淀区中关村科技园</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="copyright">
+                &copy; 2023 技术博客. 保留所有权利。
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Mobile Menu Toggle
+        const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
+        const nav = document.querySelector('nav');
+        
+        mobileMenuBtn.addEventListener('click', () => {
+            nav.classList.toggle('active');
+        });
+        
+        // Reply Form Toggle
+        const replyButtons = document.querySelectorAll('.comment-reply');
+        
+        replyButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const replyForm = button.nextElementSibling;
+                replyForm.classList.toggle('active');
+            });
+        });
+        
+        // Smooth Scrolling
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+    </script>
+</body>
+</html>

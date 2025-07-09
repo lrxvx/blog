@@ -2,6 +2,8 @@
 import DefaultTheme from 'vitepress/theme'
 import { useData } from 'vitepress'
 import { computed } from 'vue'
+import ModernPostDetail from './components/ModernPostDetail.vue'
+import PostListPage from './layouts/PostListPage.vue'
 
 const { Layout } = DefaultTheme
 const { page } = useData()
@@ -13,43 +15,26 @@ const currentPath = computed(() => page.value.relativePath)
 const isPostPage = computed(() => {
   return currentPath.value.startsWith('posts/') && currentPath.value !== 'posts/index.md'
 })
+
+// 检查当前页面是否为文章列表页面
+const isPostListPage = computed(() => {
+  return currentPath.value === 'posts/index.md'
+})
 </script>
 
 <template>
-  <Layout>
-    <!-- 在文章内容前添加标签栏、面包屑导航和文章统计 -->
-    <template #doc-before>
-      <TagBar v-if="isPostPage" />
-      <BreadcrumbNav />
-      <!-- 文章统计功能已禁用 -->
-      <!-- <PostStats /> -->
-    </template>
-    
-    <template #doc-after>
-      <div v-if="isPostPage" class="post-navigation">
-        <div class="post-tags" v-if="$frontmatter.tags && $frontmatter.tags.length > 0">
-          <span class="post-tags-label">标签：</span>
-          <a 
-            v-for="tag in $frontmatter.tags" 
-            :key="tag" 
-            :href="`/tags/#${tag}`"
-            class="post-tag"
-          >
-            {{ tag }}
-          </a>
-        </div>
-        
-        <!-- 使用PostNavigation组件 -->
-        <PostNavigation />
-        
-        <!-- 添加个人信息卡片 -->
-        <div class="profile-card-container">
-          <h3 class="profile-card-title">关于博主</h3>
-          <ProfileCard />
-        </div>
-      </div>
-    </template>
-    
+  <!-- 如果是文章页面，使用现代化的文章详情组件 -->
+  <ModernPostDetail v-if="isPostPage">
+    <Layout />
+  </ModernPostDetail>
+  
+  <!-- 如果是文章列表页面，使用专门的文章列表布局 -->
+  <PostListPage v-else-if="isPostListPage">
+    <Layout />
+  </PostListPage>
+  
+  <!-- 其他页面使用默认布局 -->
+  <Layout v-else>
     <!-- 在首页底部添加个人信息卡片 -->
     <template #home-features-after>
       <div class="home-profile-container">
@@ -193,7 +178,7 @@ const isPostPage = computed(() => {
 
 /* 首页个人信息卡片样式 */
 .home-profile-container {
-  max-width: 1152px;
+  max-width: none;
   margin: 0 auto;
   padding: 0 24px;
   margin-top: 3rem;

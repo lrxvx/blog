@@ -2,7 +2,8 @@
 import { defineConfig } from 'vitepress'
 import { extendPageData } from './theme/enhanceApp.js'
 
-export default defineConfig({  
+export default defineConfig({
+  // build配置保持默认即可
   // 忽略死链接，防止构建失败
   ignoreDeadLinks: true,
   // 站点基本信息
@@ -24,8 +25,8 @@ export default defineConfig({
     // 导航栏
     nav: [
       { text: '首页', link: '/' },
-      { text: '博客', link: '/tags/' },
-      { text: '关于', link: '/about/' },
+      { text: '博客', link: '/posts/' },
+        { text: '关于', link: '/about/' },
       { text: '统计', link: '/about/stats' },
     ],
     

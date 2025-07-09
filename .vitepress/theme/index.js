@@ -10,6 +10,9 @@ import PostStats from './components/PostStats.vue'
 import PostStatsAdmin from './components/PostStatsAdmin.vue'
 import GlobalStats from './components/GlobalStats.vue'
 import TagBar from './components/TagBar.vue'
+import ModernPostList from './components/ModernPostList.vue'
+import ModernPostDetail from './components/ModernPostDetail.vue'
+import PostListPage from './layouts/PostListPage.vue'
 import Layout from './Layout.vue'
 import { initStatsManager } from './utils/PostStatsManager.js'
 
@@ -27,6 +30,9 @@ export default {
     app.component('PostStatsAdmin', PostStatsAdmin)
     app.component('GlobalStats', GlobalStats)
     app.component('TagBar', TagBar)
+    app.component('ModernPostList', ModernPostList)
+    app.component('ModernPostDetail', ModernPostDetail)
+    app.component('PostListPage', PostListPage)
     
     // 在客户端环境下初始化统计数据管理器 - 已禁用
     /*
