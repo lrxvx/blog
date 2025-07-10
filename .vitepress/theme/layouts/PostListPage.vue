@@ -102,6 +102,7 @@ const { frontmatter } = useData()
 
 .breadcrumb-link {
   color: white;
+  font-weight: bold;
   text-decoration: none;
   transition: opacity 0.3s ease;
 }
@@ -113,10 +114,14 @@ const { frontmatter } = useData()
 .breadcrumb-separator {
   margin: 0 0.5rem;
   opacity: 0.7;
+  color: white;
+  font-weight: bold;
 }
 
 .breadcrumb-current {
   opacity: 0.9;
+  color: white;
+  font-weight: bold;
 }
 
 .post-title {

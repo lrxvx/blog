@@ -178,11 +178,18 @@ const isPostListPage = computed(() => {
 
 /* 首页个人信息卡片样式 */
 .home-profile-container {
-  max-width: none;
+  max-width: 800px;
   margin: 0 auto;
-  padding: 0 24px;
+  padding: 0 48px;
   margin-top: 3rem;
   margin-bottom: 4rem;
+}
+
+@media (max-width: 768px) {
+  .home-profile-container {
+    max-width: none;
+    padding: 0 24px;
+  }
 }
 
 .home-profile-title {

@@ -46,12 +46,23 @@
 .vp-doc h1 {
   font-size: 2.2rem;
   margin-bottom: 1.5rem;
+  margin-top: 0;
 }
 
 .vp-doc h2 {
   border-top: none;
   margin-top: 2.5rem;
   padding-top: 0;
+}
+
+/* 移除文章内容顶部空白 */
+.vp-doc > *:first-child {
+  margin-top: 0 !important;
+}
+
+/* 移除文章内容底部多余空白 */
+.vp-doc > *:last-child {
+  margin-bottom: 0 !important;
 }
 
 .vp-doc p img {

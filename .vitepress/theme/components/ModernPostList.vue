@@ -87,12 +87,10 @@
             </div>
             
             <div class="post-content">
-              <div class="post-meta">
+              <div class="post-header">
+                <h2 class="post-title">{{ post.title }}</h2>
                 <time class="post-date">{{ formatDate(post.date) }}</time>
-                <span class="post-author" v-if="post.author">{{ post.author }}</span>
               </div>
-              
-              <h2 class="post-title">{{ post.title }}</h2>
               
               <p class="post-excerpt">{{ post.description || post.excerpt || '点击阅读全文...' }}</p>
               
@@ -139,19 +137,27 @@
             </div>
             
             <div class="author-social">
-              <a href="#" class="social-item">
-                <img src="/images/wechat-gzh-qrcode.jpg" alt="微信公众号" class="social-qr" />
-                <span>微信公众号</span>
-              </a>
-              <a href="#" class="social-item">
-                <img src="/images/zsxq-qrcode.png" alt="知识星球" class="social-qr" />
-                <span>知识星球</span>
-              </a>
-              <a href="#" class="social-item">
-                <img src="/images/wechat-qrcode.png" alt="微信二维码" class="social-qr" />
-                <span>微信二维码</span>
-              </a>
-            </div>
+               <a href="https://mp.weixin.qq.com/s/rmEHqGeNgRIQ0_Jzqx0jiA" class="social-link-item" title="微信公众号" target="_blank">
+                 <svg viewBox="0 0 24 24" fill="currentColor">
+                   <path d="M8.5 12.5c0 .8-.7 1.5-1.5 1.5s-1.5-.7-1.5-1.5.7-1.5 1.5-1.5 1.5.7 1.5 1.5zm9 0c0 .8-.7 1.5-1.5 1.5s-1.5-.7-1.5-1.5.7-1.5 1.5-1.5 1.5.7 1.5 1.5z"/>
+                   <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                 </svg>
+                 <span>小路成长笔记</span>
+               </a>
+               
+               <a href="https://t.zsxq.com/17wTksRxX" class="social-link-item" title="知识星球" target="_blank">
+                 <svg viewBox="0 0 24 24" fill="currentColor">
+                   <circle cx="12" cy="12" r="10"/>
+                   <path d="M8 12h8M12 8v8"/>
+                 </svg>
+                 <span>免费星球</span>
+               </a>
+               
+               <div class="social-item" title="微信二维码">
+                 <img src="/images/wechat-qrcode.png" alt="微信二维码" class="social-qr" onerror="this.style.display='none'" />
+                 <span>微信二维码</span>
+               </div>
+             </div>
             
             <div class="author-cta">
               <a href="/about/" class="cta-button">
@@ -589,9 +595,9 @@ onMounted(() => {
   cursor: pointer;
   border: 1px solid var(--vp-c-divider);
   display: grid;
-  grid-template-columns: 150px 1fr;
+  grid-template-columns: 120px 1fr;
   gap: 0;
-  height: 120px;
+  height: 100px;
 }
 
 .post-card:hover {
@@ -604,7 +610,7 @@ onMounted(() => {
 
 .post-image {
   position: relative;
-  height: 120px;
+  height: 100px;
   overflow: hidden;
 }
 
@@ -641,50 +647,50 @@ onMounted(() => {
 
 
 .post-content {
-  padding: 1rem;
+  padding: 0.75rem;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
 }
 
-.post-meta {
+.post-header {
   display: flex;
-  align-items: center;
-  gap: 1rem;
-  margin-bottom: 0.75rem;
-  font-size: 0.9rem;
-  color: var(--vp-c-text-2);
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+  gap: 0.5rem;
 }
 
 .post-date {
+  font-size: 0.8rem;
+  color: var(--vp-c-text-2);
   font-weight: 500;
-}
-
-.post-author {
-  opacity: 0.8;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .post-title {
-  font-size: 1.1rem;
+  font-size: 1rem;
   font-weight: 600;
   line-height: 1.3;
-  margin: 0 0 0.5rem;
+  margin: 0;
   color: var(--vp-c-text-1);
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
+  flex: 1;
 }
 
 .post-excerpt {
   color: var(--vp-c-text-2);
   line-height: 1.4;
-  margin: 0 0 0.5rem;
+  margin: 0 0 0.25rem;
   display: -webkit-box;
-  -webkit-line-clamp: 2;
+  -webkit-line-clamp: 1;
   -webkit-box-orient: vertical;
   overflow: hidden;
-  font-size: 0.9rem;
+  font-size: 0.85rem;
 }
 
 .post-footer {
@@ -1019,11 +1025,40 @@ onMounted(() => {
   transform: translateY(-1px);
 }
 
+.social-link-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem;
+  background: var(--vp-c-bg);
+  border: 1px solid var(--vp-c-divider);
+  border-radius: 0.5rem;
+  color: var(--vp-c-text-2);
+  text-decoration: none;
+  font-size: 0.85rem;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.social-link-item:hover {
+  background: var(--vp-c-brand-soft);
+  border-color: var(--vp-c-brand);
+  color: var(--vp-c-brand);
+  transform: translateY(-1px);
+}
+
+.social-link-item svg {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+}
+
 .social-qr {
-  width: 32px;
-  height: 32px;
-  border-radius: 4px;
+  width: 120px;
+  height: 120px;
+  border-radius: 8px;
   object-fit: cover;
+  border: 2px solid var(--vp-c-divider);
 }
 
 .author-cta {

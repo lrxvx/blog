@@ -16,6 +16,8 @@
           <span class="breadcrumb-separator">></span>
           <a href="/posts/" class="breadcrumb-link">文章</a>
           <span class="breadcrumb-separator">></span>
+          <a v-if="currentTag" :href="`/posts/?category=${encodeURIComponent(currentTag)}`" class="breadcrumb-link">{{ currentTag }}</a>
+          <span v-if="currentTag" class="breadcrumb-separator">></span>
           <span class="breadcrumb-current">{{ frontmatter.title }}</span>
         </nav>
         
@@ -148,9 +150,9 @@
         </article>
         
         <!-- 文章底部信息 -->
-        <footer class="post-footer">
+        <footer v-if="frontmatter.lastUpdated" class="post-footer">
           <div class="post-update-info">
-            <div v-if="frontmatter.lastUpdated" class="update-time">
+            <div class="update-time">
               最后更新：{{ formatDate(frontmatter.lastUpdated) }}
             </div>
           </div>
@@ -276,7 +278,6 @@
       </div>
     </nav>
 
-
   </div>
 </template>
 
@@ -373,6 +374,25 @@ const allTags = computed(() => {
 
 const maxTagCount = computed(() => {
   return Math.max(...allTags.value.map(tag => tag.count), 1)
+})
+
+// 获取当前标签（从URL参数或文章的第一个标签）
+const currentTag = computed(() => {
+  if (typeof window === 'undefined') return null
+  
+  // 首先尝试从URL参数获取
+  const urlParams = new URLSearchParams(window.location.search)
+  const categoryFromUrl = urlParams.get('category')
+  if (categoryFromUrl && frontmatter.value.tags && frontmatter.value.tags.includes(categoryFromUrl)) {
+    return categoryFromUrl
+  }
+  
+  // 如果没有URL参数或参数无效，使用文章的第一个标签
+  if (frontmatter.value.tags && frontmatter.value.tags.length > 0) {
+    return frontmatter.value.tags[0]
+  }
+  
+  return null
 })
 
 // 方法
@@ -568,6 +588,7 @@ onUnmounted(() => {
 
 .breadcrumb-link {
   color: white;
+  font-weight: bold;
   text-decoration: none;
   transition: opacity 0.3s ease;
 }
@@ -578,10 +599,14 @@ onUnmounted(() => {
 
 .breadcrumb-separator {
   opacity: 0.6;
+  color: white;
+  font-weight: bold;
 }
 
 .breadcrumb-current {
   opacity: 0.8;
+  color: white;
+  font-weight: bold;
   max-width: 200px;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -660,7 +685,7 @@ onUnmounted(() => {
   gap: 1.5rem;
   max-width: 1300px;
   margin: 0 auto;
-  padding: 2rem;
+  padding: 0 2rem 2rem;
   align-items: start;
 }
 
@@ -995,8 +1020,8 @@ onUnmounted(() => {
 .post-content {
   background: var(--vp-c-bg);
   border-radius: 1rem;
-  padding: 3rem;
-  margin-bottom: 3rem;
+  padding: 2rem;
+  margin-bottom: 1.5rem;
   border: 1px solid var(--vp-c-divider);
   line-height: 1.8;
   font-size: 1.1rem;
@@ -1005,12 +1030,12 @@ onUnmounted(() => {
 .post-footer {
   background: var(--vp-c-bg-soft);
   border-radius: 1rem;
-  padding: 2rem;
+  padding: 1rem;
   border: 1px solid var(--vp-c-divider);
 }
 
 .post-update-info {
-  padding-top: 1.5rem;
+  padding-top: 0;
 }
 
 .update-time {
@@ -1604,4 +1629,5 @@ onUnmounted(() => {
 .post-container.list-page .post-footer {
   display: none;
 }
+
 </style>

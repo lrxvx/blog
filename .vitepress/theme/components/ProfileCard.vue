@@ -113,6 +113,14 @@
   object-fit: contain;
 }
 
+/* 微信二维码特殊样式，放大到可扫码的程度 */
+.qrcode-item:last-child .qrcode {
+  max-width: 160px;
+  max-height: 160px;
+  min-width: 120px;
+  min-height: 120px;
+}
+
 @media (max-width: 640px) {
   .qrcode-container {
     flex-direction: column;
