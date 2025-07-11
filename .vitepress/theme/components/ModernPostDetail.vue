@@ -524,8 +524,8 @@ onUnmounted(() => {
 /* 文章头部 */
 .post-header {
   position: relative;
-  height: 60vh;
-  min-height: 400px;
+  height: 50vh;
+  min-height: 350px;
   display: flex;
   align-items: center;
   justify-content: center;

@@ -43,45 +43,32 @@
         </div>
         
         <div class="tag-bar">
-          <!-- 全部标签按钮 -->
-          <button 
-            :class="['tag-btn', 'tag-all', { active: activeTag === '全部' }]"
-            @click="setActiveTag('全部')"
-          >
-            <span class="tag-icon">📂</span>
-            全部 ({{ totalCount }})
-          </button>
-          
           <!-- 主要标签 -->
           <div 
             v-for="tag in mainTags" 
             :key="tag.name"
             class="tag-item"
-            @mouseenter="() => { cancelHideDropdown(); showDropdown = tag.name; }"
-            @mouseleave="hideDropdown"
           >
             <button 
-              :class="['tag-btn', { active: isTagActive(tag.name) }]"
-              @click="setActiveTag(tag.name)"
+              :class="['tag-btn', { active: isTagActive(tag.name), 'has-dropdown': tag.children && tag.children.length > 0 }]"
+              @click="handleTagClick(tag)"
             >
               <span class="tag-icon">{{ tag.icon }}</span>
               {{ tag.displayName }} ({{ tag.count }})
-              <span v-if="tag.children && tag.children.length > 0" class="dropdown-arrow">▼</span>
+              <span v-if="tag.children && tag.children.length > 0" class="dropdown-arrow" :class="{ rotated: showDropdown === tag.name }">▼</span>
             </button>
             
             <!-- 多级标签下拉菜单 -->
             <div 
               v-if="tag.children && tag.children.length > 0" 
               :class="['dropdown-menu', { show: showDropdown === tag.name }]"
-              @mouseenter="() => { cancelHideDropdown(); showDropdown = tag.name; }"
-              @mouseleave="hideDropdown"
             >
               <div class="dropdown-header">{{ tag.displayName }} 子标签</div>
               <button 
                 v-for="child in tag.children"
                 :key="child.name"
                 :class="['dropdown-item', { active: activeTag === child.name }]"
-                @click="setActiveTag(child.name)"
+                @click.stop="setActiveTag(child.name)"
               >
                 <span class="child-icon">{{ child.icon || '🏷️' }}</span>
                 {{ child.displayName }} ({{ child.count }})
@@ -95,7 +82,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useData, useRouter } from 'vitepress'
 
 const { site } = useData()
@@ -110,54 +97,102 @@ const showDropdown = ref('')
 // 定义事件
 const emits = defineEmits(['search', 'tagChange'])
 
-// 手动定义的文章数据和标签层次结构
-const posts = [
-  { tags: ['副业100问', '副业'] },
-  { tags: ['副业100问', '副业'] },
-  { tags: ['VitePress', '博客', '教程'] },
-  { tags: ['一人企业日记', 'AI编程', '教程'] }
-]
+// 从props接收文章数据
+const props = defineProps({
+  posts: {
+    type: Array,
+    default: () => []
+  }
+})
 
 // 定义标签层次结构和图标
 const tagHierarchy = {
   '副业': {
     icon: '💼',
-    children: ['副业100问']
+    children: ['副业100问', '副业思考', '副业实践', '公众号']
+  },
+  '写作': {
+    icon: '✍️',
+    children: ['写作100问', '写作技巧', '写作心得']
   },
   '技术': {
     icon: '💻',
-    children: ['VitePress', '博客', 'AI编程']
+    children: ['VitePress', '博客', 'AI编程', '前端开发', '后端开发']
   },
   '教程': {
     icon: '📚',
-    children: []
+    children: ['基础教程', '进阶教程', '实战教程']
   },
   '日记': {
     icon: '📝',
-    children: ['一人企业日记']
+    children: ['一人企业日记', '技术日记', '生活日记']
+  },
+  '工具': {
+    icon: '🔧',
+    children: ['开发工具', '效率工具', '设计工具']
+  },
+  '思考': {
+    icon: '💭',
+    children: ['技术思考', '产品思考', '人生思考']
   }
 }
 
 // 子标签图标映射
 const childTagIcons = {
   '副业100问': '❓',
+  '副业思考': '💡',
+  '副业实践': '🎯',
+  '公众号': '📢',
+  '写作100问': '❓',
+  '写作技巧': '✨',
+  '写作心得': '💭',
   'VitePress': '⚡',
   '博客': '📖',
   'AI编程': '🤖',
-  '一人企业日记': '👤'
+  '前端开发': '🎨',
+  '后端开发': '⚙️',
+  '一人企业日记': '👤',
+  '技术日记': '💻',
+  '生活日记': '🌱',
+  '基础教程': '📝',
+  '进阶教程': '🚀',
+  '实战教程': '⚔️',
+  '开发工具': '🛠️',
+  '效率工具': '⚡',
+  '设计工具': '🎨',
+  '技术思考': '🤔',
+  '产品思考': '💼',
+  '人生思考': '🌟'
 }
 
 // 计算总文章数
-const totalCount = computed(() => posts.length)
+const totalCount = computed(() => props.posts.length)
 
 // 获取所有标签统计
 const allTagStats = computed(() => {
   const tagMap = new Map()
   
-  posts.forEach(post => {
+  props.posts.forEach(post => {
     if (post.tags && Array.isArray(post.tags)) {
       post.tags.forEach(tag => {
-        tagMap.set(tag, (tagMap.get(tag) || 0) + 1)
+        // 处理多级标签格式 (如: "副业/副业100问")
+        if (tag.includes('/')) {
+          const parts = tag.split('/')
+          const parentName = parts[0]
+          const childName = parts[1]
+          
+          if (parentName && childName) {
+            // 统计子级标签
+            tagMap.set(childName, (tagMap.get(childName) || 0) + 1)
+            // 统计父级标签（用于计算父级总数）
+            tagMap.set(parentName, (tagMap.get(parentName) || 0) + 1)
+            // 统计完整的标签路径
+            tagMap.set(tag, (tagMap.get(tag) || 0) + 1)
+          }
+        } else {
+          // 普通标签
+          tagMap.set(tag, (tagMap.get(tag) || 0) + 1)
+        }
       })
     }
   })
@@ -168,54 +203,94 @@ const allTagStats = computed(() => {
 // 构建主要标签（父级标签）
 const mainTags = computed(() => {
   const tags = []
+  const parentChildMap = new Map()
   
-  Object.entries(tagHierarchy).forEach(([parentName, config]) => {
-    const parentCount = allTagStats.value.get(parentName) || 0
-    const childrenCount = config.children.reduce((sum, child) => {
-      return sum + (allTagStats.value.get(child) || 0)
-    }, 0)
-    
-    const totalTagCount = parentCount + childrenCount
-    
-    if (totalTagCount > 0) {
-      const children = config.children
+  // 如果没有文章数据，返回空数组
+  if (!props.posts || props.posts.length === 0) {
+    return tags
+  }
+  
+  // 首先添加"全部"标签
+  tags.push({
+    name: '全部',
+    displayName: '全部',
+    count: props.posts.length,
+    icon: '📂',
+    children: []
+  })
+  
+  // 遍历所有文章的标签
+  props.posts.forEach(post => {
+    if (post.tags && Array.isArray(post.tags)) {
+      post.tags.forEach(tag => {
+        if (tag.includes('/')) {
+          const parts = tag.split('/')
+          const parentName = parts[0]
+          const childName = parts[1]
+          
+          if (parentName && childName) {
+            if (!parentChildMap.has(parentName)) {
+              parentChildMap.set(parentName, new Set())
+            }
+            parentChildMap.get(parentName).add(childName)
+          }
+        } else {
+          // 独立标签
+          if (!parentChildMap.has(tag)) {
+            parentChildMap.set(tag, null)
+          }
+        }
+      })
+    }
+  })
+  
+  // 构建父级标签
+  parentChildMap.forEach((childrenSet, parentName) => {
+    if (childrenSet && childrenSet.size > 0) {
+      // 有子标签的父级标签
+      const children = Array.from(childrenSet)
         .map(childName => ({
           name: childName,
           displayName: childName,
           count: allTagStats.value.get(childName) || 0,
-          icon: childTagIcons[childName]
+          icon: childTagIcons[childName] || '🏷️'
         }))
         .filter(child => child.count > 0)
+        .sort((a, b) => b.count - a.count)
       
-      tags.push({
-        name: parentName,
-        displayName: parentName,
-        count: totalTagCount,
-        icon: config.icon,
-        children: children
-      })
+      // 父级标签的计数使用统计数据
+      const parentCount = allTagStats.value.get(parentName) || 0
+      
+      if (parentCount > 0) {
+        tags.push({
+          name: parentName,
+          displayName: parentName,
+          count: parentCount,
+          icon: tagHierarchy[parentName]?.icon || '📁',
+          children: children
+        })
+      }
+    } else {
+      // 独立标签（没有子标签）
+      const count = allTagStats.value.get(parentName) || 0
+      if (count > 0) {
+        tags.push({
+          name: parentName,
+          displayName: parentName,
+          count: count,
+          icon: '🏷️',
+          children: []
+        })
+      }
     }
   })
   
-  // 添加没有父级的独立标签
-  allTagStats.value.forEach((count, tagName) => {
-    const isChild = Object.values(tagHierarchy).some(config => 
-      config.children.includes(tagName)
-    )
-    const isParent = tagHierarchy.hasOwnProperty(tagName)
-    
-    if (!isChild && !isParent && count > 0) {
-      tags.push({
-        name: tagName,
-        displayName: tagName,
-        count: count,
-        icon: '🏷️',
-        children: []
-      })
-    }
+  // 排序："全部"标签始终在第一位，其他标签按文章数量排序
+  return tags.sort((a, b) => {
+    if (a.name === '全部') return -1
+    if (b.name === '全部') return 1
+    return b.count - a.count
   })
-  
-  return tags.sort((a, b) => b.count - a.count)
 })
 
 // 检查标签是否激活（包括子标签）
@@ -229,6 +304,21 @@ const isTagActive = (tagName) => {
   }
   
   return false
+}
+
+// 处理标签点击事件
+const handleTagClick = (tag) => {
+  // 如果有子标签，切换下拉菜单显示状态
+  if (tag.children && tag.children.length > 0) {
+    if (showDropdown.value === tag.name) {
+      showDropdown.value = ''
+    } else {
+      showDropdown.value = tag.name
+    }
+  } else {
+    // 如果没有子标签，直接设置为活跃标签
+    setActiveTag(tag.name)
+  }
 }
 
 // 设置活跃标签
@@ -280,8 +370,27 @@ const clearSearch = () => {
   emits('search', '')
 }
 
-// 隐藏下拉菜单
+// 下拉菜单显示控制
 let hideDropdownTimer = null
+
+const handleMouseEnter = (tagName) => {
+  if (hideDropdownTimer) {
+    clearTimeout(hideDropdownTimer)
+    hideDropdownTimer = null
+  }
+  showDropdown.value = tagName
+}
+
+const handleMouseLeave = () => {
+  if (hideDropdownTimer) {
+    clearTimeout(hideDropdownTimer)
+  }
+  hideDropdownTimer = setTimeout(() => {
+    showDropdown.value = ''
+  }, 200)
+}
+
+// 隐藏下拉菜单
 const hideDropdown = () => {
   if (hideDropdownTimer) {
     clearTimeout(hideDropdownTimer)
@@ -311,12 +420,28 @@ const initFromHash = () => {
   }
 }
 
+// 点击外部区域关闭下拉菜单
+const handleClickOutside = (event) => {
+  const tagBar = event.target.closest('.tag-bar-container')
+  if (!tagBar) {
+    showDropdown.value = ''
+  }
+}
+
 onMounted(() => {
   initFromHash()
   
   // 监听hash变化
   if (typeof window !== 'undefined') {
     window.addEventListener('hashchange', initFromHash)
+    document.addEventListener('click', handleClickOutside)
+  }
+})
+
+// 清理事件监听器
+onUnmounted(() => {
+  if (typeof window !== 'undefined') {
+    document.removeEventListener('click', handleClickOutside)
   }
 })
 </script>
@@ -514,6 +639,10 @@ onMounted(() => {
   background: linear-gradient(135deg, var(--vp-c-brand-1) 0%, var(--vp-c-brand-2) 100%);
 }
 
+.tag-item {
+  position: relative;
+}
+
 .tag-icon {
   font-size: 1rem;
   line-height: 1;
@@ -525,8 +654,16 @@ onMounted(() => {
   margin-left: 0.25rem;
 }
 
-.tag-item:hover .dropdown-arrow {
+.dropdown-arrow.rotated {
   transform: rotate(180deg);
+}
+
+.tag-btn.has-dropdown {
+  position: relative;
+}
+
+.tag-btn.has-dropdown:hover {
+  cursor: pointer;
 }
 
 /* 下拉菜单样式 */
@@ -539,18 +676,20 @@ onMounted(() => {
   border: 2px solid var(--vp-c-divider);
   border-radius: 12px;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
-  z-index: 20;
+  z-index: 1000;
   opacity: 0;
   visibility: hidden;
   transform: translateY(-8px) scale(0.95);
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   overflow: hidden;
+  pointer-events: none;
 }
 
 .dropdown-menu.show {
   opacity: 1;
   visibility: visible;
   transform: translateY(0) scale(1);
+  pointer-events: auto;
 }
 
 .dropdown-header {

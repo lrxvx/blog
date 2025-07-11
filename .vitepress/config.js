@@ -8,8 +8,8 @@ export default defineConfig({
   ignoreDeadLinks: true,
   // 站点基本信息
   lang: 'zh-CN',
-  title: '个人博客',
-  description: '基于VitePress的个人博客网站',
+  title: '小路副业创业指南 | 副业思考·自媒体创业·在职副业方法论',
+  description: '专注副业创业指导，提供副业思考、自媒体创业信息、副业资源和在职场做副业的实用方法论。帮助职场人士开启副业之路，实现财务自由。',
   lastUpdated: true,
 
   // SEO 优化
@@ -25,9 +25,8 @@ export default defineConfig({
     // 导航栏
     nav: [
       { text: '首页', link: '/' },
-      { text: '博客', link: '/posts/' },
-        { text: '关于', link: '/about/' },
-      { text: '统计', link: '/about/stats' },
+      { text: '文章', link: '/posts/' },
+        { text: '关于', link: '/about/' }
     ],
     
     // 侧边栏
@@ -36,8 +35,7 @@ export default defineConfig({
         {
           text: '关于',
           items: [
-            { text: '关于我', link: '/about/' },
-            { text: '文章统计', link: '/about/stats' },
+            { text: '关于我', link: '/about/' }
           ]
         }
       ],
@@ -85,14 +83,14 @@ export default defineConfig({
     ['meta', { name: 'viewport', content: 'width=device-width, initial-scale=1.0' }],
     // SEO 相关元标签
     ['meta', { name: 'author', content: '博主' }],
-    ['meta', { name: 'keywords', content: '博客,技术,编程,VitePress,Vue' }],
+    ['meta', { name: 'keywords', content: '副业,副业创业,自媒体创业,公众号运营,写作赚钱,在职副业,副业思考,副业资源,副业方法论,职场副业,side hustle,freelancing,content creation,social media marketing,online business,passive income,digital marketing,entrepreneurship,work from home,小路副业' }],
     ['meta', { property: 'og:type', content: 'website' }],
-    ['meta', { property: 'og:title', content: '个人博客' }],
-    ['meta', { property: 'og:description', content: '基于VitePress的个人博客网站' }],
+    ['meta', { property: 'og:title', content: '小路副业创业指南 - 副业思考·自媒体创业·在职副业方法论' }],
+    ['meta', { property: 'og:description', content: '专注副业创业指导，提供副业思考、自媒体创业信息、副业资源和在职场做副业的实用方法论。帮助职场人士开启副业之路，实现财务自由。' }],
     ['meta', { property: 'og:image', content: 'https://yourdomain.com/images/og-image.jpg' }],
     ['meta', { name: 'twitter:card', content: 'summary_large_image' }],
-    ['meta', { name: 'twitter:title', content: '个人博客' }],
-    ['meta', { name: 'twitter:description', content: '基于VitePress的个人博客网站' }],
+    ['meta', { name: 'twitter:title', content: '小路副业创业指南 - Side Hustle & Entrepreneurship Guide' }],
+    ['meta', { name: 'twitter:description', content: '专注副业创业指导，提供副业思考、自媒体创业信息、副业资源和在职场做副业的实用方法论。Expert guidance on side hustles, content creation, and entrepreneurship.' }],
     ['meta', { name: 'twitter:image', content: 'https://yourdomain.com/images/twitter-image.jpg' }],
   ],
 })
